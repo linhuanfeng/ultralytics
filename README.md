@@ -1,3 +1,23 @@
+
+
+conda activate yolov8_env
+cd /home/xiaozhang/code/ultralytics
+yolo detect train \
+  data=/home/xiaozhang/code/ultralytics/dataset/dataset/zhou/yolo_dataset/data.yaml \
+  model=yolov8s.pt \
+  epochs=100 \
+  imgsz=640 \
+  batch=16 \
+  name=zhou_dino
+
+yolo detect predict model=runs/detect/zhou_dino/weights/best.pt source=/home/xiaozhang/code/ultralytics/dataset/dataset/test/6a370c2a9a87d70175615bcb8c09469d.jpg
+
+
+
+
+
+
+
 <div align="center">
   <p>
     <a href="https://github.com/ultralytics/assets/releases/tag/v8.2.0" target="_blank">
