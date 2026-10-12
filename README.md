@@ -7,13 +7,13 @@ yolo detect train \
   model=yolov8s.pt \
   epochs=100 \
   imgsz=640 \
-  batch=16 \
-  name=zhou_dino
+  batch=32 \
+  name=zhou_dino_v0.1
 
 yolo detect predict model=runs/detect/zhou_dino/weights/best.pt source=/home/xiaozhang/code/ultralytics/dataset/dataset/test/6a370c2a9a87d70175615bcb8c09469d.jpg
 
 
-
+可以考虑把.cache删掉
 
 
 
