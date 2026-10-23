@@ -1,21 +1,51 @@
 
-
+# 训练流程
+```
 conda activate yolov8_env
 cd /home/xiaozhang/code/ultralytics
-yolo detect train \
-  data=/home/xiaozhang/code/ultralytics/dataset/dataset/zhou/yolo_dataset/data.yaml \
+YOLO_OFFLINE=true yolo detect train \
+  data=/home/xiaozhang/code/ultralytics/dataset/dataset/datasetsv2/data.yaml \
   model=yolov8s.pt \
-  epochs=100 \
+  epochs=150 \
+  patience=30 \
   imgsz=640 \
   batch=32 \
-  name=zhou_dino_v0.1
+  cos_lr=True \
+  close_mosaic=15 \
+  cache=ram \
+  workers=8 \
+  seed=42 \
+  name=2026_10_21_v2
+```
+我只在你原命令上改了这几项，其余保持默认：
+
+epochs=150 加 patience=30：新类别每类只有约 80 张图，收敛比原来的 2 类慢，所以给足轮数。验证集连续 30 轮没有提升就自动停，不会白跑。
+cos_lr=True：学习率余弦衰减，数据量小时后期更稳。
+close_mosaic=15：最后 15 轮关掉 mosaic 增强，让模型在更接近真实拍照的图上收尾。默认是 10。
+cache=ram：数据集 7GB 左右，内存还剩 49GB，缓存后每轮读图更快。
+seed=42：固定随机种子，方便复现和对比。
+YOLO_OFFLINE=true：见下面的更正。
 
 yolo detect predict model=runs/detect/zhou_dino/weights/best.pt source=/home/xiaozhang/code/ultralytics/dataset/dataset/test/6a370c2a9a87d70175615bcb8c09469d.jpg
+
+#训练完成后用测试集评估，只看一次：
+yolo detect val model=runs/detect/2026_10_21_v2/weights/best.pt \
+  data=/home/xiaozhang/code/ultralytics/dataset/dataset/datasetsv2/data.yaml split=test
 
 
 可以考虑把.cache删掉
 
+# 新数据处理流程
+如何整合图像增强的数据
+```
+结构本身没问题。 Ultralytics 推导标签路径的规则是把图片路径里最后一个 /images/ 换成 /labels/,再把后缀改成 .txt(见 utils.py:45-48),并且会递归读子目录(glob("**/*.*", recursive=True))。所以 images/<物种>/x.jpg 对应 labels/<物种>/x.txt 这种结构完全有效,不必是严格的 train/val 形式。
 
+但 output 这份有三个问题:
+
+类别 ID 全是 0。 11 个物种文件夹里的标签第一列都是 0。直接训练会变成"只有一个类别",11 种恐龙无法区分。需要按文件夹重新映射成 0 到 10。
+没有 train/val 划分。 需要自己划分,或用 scripts/split_dataset.py。
+classes.txt 混在标签目录里。 这是 labelImg 生成的,Ultralytics 会忽略它,不影响训练,但记得别把它当成标签文件。
+```
 
 
 <div align="center">
