@@ -15,7 +15,7 @@ YOLO_OFFLINE=true yolo detect train \
   cache=ram \
   workers=8 \
   seed=42 \
-  name=2026_10_21_v2
+  name=2026_10_26_v2
 ```
 我只在你原命令上改了这几项，其余保持默认：
 
