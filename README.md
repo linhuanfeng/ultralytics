@@ -2,21 +2,37 @@
 # 训练流程
 ```
 conda activate yolov8_env
-cd /home/xiaozhang/code/ultralytics
+cd /media/xiaozhang/7b92dbd7-9b4b-479a-82aa-eea1734006a21/other_workspace/ultralytics
 YOLO_OFFLINE=true yolo detect train \
-  data=/home/xiaozhang/code/ultralytics/dataset/dataset/datasetsv2/data.yaml \
+  data=/media/xiaozhang/7b92dbd7-9b4b-479a-82aa-eea1734006a21/other_workspace/dataset/datasetsv3/data.yaml \
   model=yolov8s.pt \
-  epochs=150 \
-  patience=30 \
+  epochs=50 \
+  patience=20 \
   imgsz=640 \
   batch=32 \
   cos_lr=True \
-  close_mosaic=15 \
+  close_mosaic=10 \
   cache=ram \
-  workers=8 \
+  workers=12 \
   seed=42 \
-  name=2026_10_26_v2
+  name=2026_10_29_v1
 ```
+
+```
+conda activate yolov8_env
+cd /media/xiaozhang/7b92dbd7-9b4b-479a-82aa-eea1734006a21/other_workspace/ultralytics
+free -g | sed -n 2p   # 先确认可用内存 ≥ 55GB
+PYTHONPATH=$PWD YOLO_OFFLINE=true yolo detect train \
+  data=/media/xiaozhang/7b92dbd7-9b4b-479a-82aa-eea1734006a21/other_workspace/dataset/datasetsv3/data.yaml \
+  model=yolov8s.pt epochs=40 patience=20 imgsz=640 batch=32 \
+  optimizer=AdamW lr0=0.0002 warmup_bias_lr=0.0 cos_lr=True close_mosaic=8 \
+  cache=ram workers=12 seed=42 name=2026_10_29_v3
+
+
+```
+
+
+
 我只在你原命令上改了这几项，其余保持默认：
 
 epochs=150 加 patience=30：新类别每类只有约 80 张图，收敛比原来的 2 类慢，所以给足轮数。验证集连续 30 轮没有提升就自动停，不会白跑。
