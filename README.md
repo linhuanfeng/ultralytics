@@ -23,8 +23,8 @@ conda activate yolov8_env
 cd /media/xiaozhang/7b92dbd7-9b4b-479a-82aa-eea1734006a21/other_workspace/ultralytics
 free -g | sed -n 2p   # 先确认可用内存 ≥ 55GB
 PYTHONPATH=$PWD YOLO_OFFLINE=true yolo detect train \
-  data=/media/xiaozhang/7b92dbd7-9b4b-479a-82aa-eea1734006a21/other_workspace/dataset/datasetsv3/data.yaml \
-  model=yolov8s.pt epochs=40 patience=20 imgsz=640 batch=32 \
+  data=/media/xiaozhang/7b92dbd7-9b4b-479a-82aa-eea1734006a21/other_workspace/dataset/datasetsv3_origin_augumented/data.yaml \
+  model=yolov8s.pt epochs=100 patience=25 imgsz=640 batch=32 \
   optimizer=AdamW lr0=0.0002 warmup_bias_lr=0.0 cos_lr=True close_mosaic=8 degrees=180  \
   cache=ram workers=12 seed=42 name=2026_11_2_v1
 
